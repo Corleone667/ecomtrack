@@ -14,14 +14,44 @@ services:
       - ecom-network
 
   product-service:
-    build: .
+    build: ../product-service
     container_name: product-service
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecomtrack
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/ecomtrack
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8081:8080"
+    networks:
+      - ecom-network
+
+  orderservice:
+    build: ../orderservice
+    container_name: orderservice
+    depends_on:
+      - postgres
+      - product-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/ecomtrack
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      PRODUCT_SERVICE_URL: http://product-service:8080
+    ports:
+      - "8082:8080"
+    networks:
+      - ecom-network
+
+  api-gateway:
+    build: ../api-gateway
+    container_name: api-gateway
+    depends_on:
+      - product-service
+      - orderservice
+    environment:
+      PRODUCT_SERVICE_URL: http://product-service:8080
+      ORDER_SERVICE_URL: http://orderservice:8080
     ports:
       - "8080:8080"
     networks:

@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # Copier le fichier JAR généré dans le conteneur
-COPY target/ecomtrack-0.0.1-SNAPSHOT.jar app.jar
+COPY ../target/ecomtrack-0.0.1-SNAPSHOT.jar app.jar
 
 # Exposer le port utilisé par l'application
 EXPOSE 8080
